@@ -1,6 +1,11 @@
 # ray-serve-text-ml
 
+This repo contains docker file, ray service definition and python code that serve [t5-small](https://huggingface.co/google-t5/t5-small) model on K8s.
+
 ## Download model
+
+For isolated K8s, the serving application cannot download the model from huggingface at runtime.
+Instead, we can download the model files locally and put into the docker image.
 
 ```
 >>> from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
@@ -20,7 +25,7 @@
 
 ## Build and publish docker image
 
-Note: replace image tag with your username
+Note: replace image tag with your docker registry and username.
 ```
 docker build -f Dockerfile -t registry-host/username/ray:2.9.0-py39-text-ml-v3 .
 docker push registry-host/username/ray:2.9.0-py39-text-ml-v3
