@@ -1,6 +1,9 @@
 # ray-serve-text-ml
 
-This repo contains docker file, ray service definition and python code that serve [t5-small](https://huggingface.co/google-t5/t5-small) model on K8s.
+This repo contains docker file, YAML definition and python code:
+
+* serve [t5-small](https://huggingface.co/google-t5/t5-small) model on K8s using RayServe
+* finetune t5-small with text-to-SQL dataset [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context?row=3) on K8s using RayJob
 
 ## Download model
 
