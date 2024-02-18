@@ -1,7 +1,8 @@
 # for local testing only
 # ray[serve]==2.9.0
+ray
 torch==1.11.0
-transformers
+transformers[torch]
 fastapi>=0.80
 python-multipart>=0.0.6
 pandas>=1.1.5
@@ -14,3 +15,9 @@ starlette
 python-jose[cryptography]
 jose
 diffusers==0.12.1 # for stable-diffusion
+datasets
+nltk
+evaluate
+rouge_score
+tensorboard
+gpustat
