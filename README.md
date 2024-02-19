@@ -5,6 +5,8 @@ This repo contains docker file, YAML definition and python code:
 * serve [t5-small](https://huggingface.co/google-t5/t5-small) model on K8s using RayServe
 * finetune t5-small with text-to-SQL dataset [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context?row=3) on K8s using RayJob
 
+A huggingface <img src="https://huggingface.co/front/assets/huggingface_logo.svg" width="20" height="20"> model is provided at: [t5-small-text-to-sql](https://huggingface.co/viirya/t5-small-text-to-sql)
+
 ## Download model
 
 For isolated K8s, the serving application cannot download the model from huggingface at runtime.
