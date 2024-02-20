@@ -13,6 +13,8 @@ from ray.train.torch import TorchTrainer
 
 from datasets import load_dataset, load_from_disk
 import nltk
+# Isolated K8s cluster doesn't have internet access. nltk.download('punkt') will fail.
+# We install it in docker image.
 # nltk.download('punkt')
 from transformers import AutoTokenizer
 import evaluate
