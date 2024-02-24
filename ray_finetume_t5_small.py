@@ -1,4 +1,6 @@
 
+import os
+
 from pprint import pprint
 import ray
 
@@ -32,13 +34,17 @@ s3_bucket = "ray-example-data"
 # Ray cluster launched by KubeRay doesn't respect resource rayStartParams field in yaml file
 # https://github.com/ray-project/ray/issues/43261
 # So 2+ `cpus_per_worker` will cause issue in Ray.
-cpus_per_worker = 1
-gpus_per_worker = 0
-batch_size = 8
+cpus_per_worker = int(os.environ.get("CPUS_PER_WORKER", "1"))
+gpus_per_worker = int(os.environ.get("GPUS_PER_WORKER", "0"))
+batch_size = int(os.environ.get("BATCH_SIZE", "8"))
+# SPREAD or PACK or STRICT_PACK or STRICT_SPREAD
+placement = os.environ.get("PLACEMENT", "SPREAD")
+
 # Setting num_workers to 6+ (the cpu limit in yaml file) will cause issue in Ray. See
 # https://github.com/ray-project/ray/issues/43265
-num_workers = 5
-use_gpu = False
+num_workers = int(os.environ.get("NUM_WORKERS", "5"))
+use_gpu = os.environ.get("USE_GPU", "False").lower() == "true"
+epochs = int(os.environ.get("EPOCHS", "10"))
 
 def train_func(config):
     batch_size = config.get("batch_size", 8)
@@ -62,11 +68,11 @@ def train_func(config):
     args = Seq2SeqTrainingArguments(
         model_dir,
         evaluation_strategy="steps",
-        eval_steps=1,
+        eval_steps=100,
         logging_strategy="steps",
-        logging_steps=1,
+        logging_steps=100,
         save_strategy="steps",
-        save_steps=1,
+        save_steps=200,
         learning_rate=4e-5,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
@@ -205,14 +211,14 @@ steps_per_epoch = train_ds_size // (batch_size * num_workers)
 trainer = TorchTrainer(
     train_func,
     train_loop_config={
-        "epochs": 10,
+        "epochs": epochs,
         "batch_size": batch_size,  # per device
         # Need to provide steps_per_epoch to avoid the following error:
         # https://github.com/huggingface/datasets/issues/5773
         # https://discuss.huggingface.co/t/streaming-dataset-into-trainer-does-not-implement-len-max-steps-has-to-be-specified/32893
         "steps_per_epoch": steps_per_epoch
     },
-    scaling_config=ScalingConfig(num_workers=num_workers, use_gpu=use_gpu, resources_per_worker={"GPU": gpus_per_worker, "CPU": cpus_per_worker}),
+    scaling_config=ScalingConfig(num_workers=num_workers, use_gpu=use_gpu, resources_per_worker={"GPU": gpus_per_worker, "CPU": cpus_per_worker}, placement_strategy=placement),
     run_config=RunConfig(storage_filesystem=s3fs, storage_path=f"{s3_bucket}/ml_ray_results", verbose=2),
     datasets=processed_datasets
 )

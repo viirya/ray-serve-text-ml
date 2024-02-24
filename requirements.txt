@@ -1,6 +1,8 @@
 # for local testing only
 # ray[serve]==2.9.0
-ray
+ray==2.9.2
+# torch 1.11.0 cannot work on M3 Macbook
+# But latest torch doesn't work on EKS
 torch==1.11.0
 transformers[torch]
 fastapi>=0.80
@@ -21,3 +23,4 @@ evaluate
 rouge_score
 tensorboard
 gpustat
+sentencepiece
