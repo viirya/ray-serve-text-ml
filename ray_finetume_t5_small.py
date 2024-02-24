@@ -46,9 +46,11 @@ num_workers = int(os.environ.get("NUM_WORKERS", "5"))
 use_gpu = os.environ.get("USE_GPU", "False").lower() == "true"
 epochs = int(os.environ.get("EPOCHS", "10"))
 
+sampled_num = os.environ.get("SAMPLED_NUM")
+
 def train_func(config):
     batch_size = config.get("batch_size", 8)
-    epochs = config.get("epochs", 2)
+    epochs = config.get("epochs", 10)
     steps_per_epoch = config.get("steps_per_epoch", 100)
 
     # Use absolute path to load the model and tokenizer as Ray will run the training script in a different directory.
@@ -185,9 +187,10 @@ def preprocess_data(examples):
 tokenized_datasets = dataset.map(preprocess_data, batched=True, remove_columns=["question", "context", "answer"])
 
 # Select a subset of the dataset for quick testing
-tokenized_datasets["train"] = tokenized_datasets["train"].shuffle().select(range(100))
-tokenized_datasets["validation"] = tokenized_datasets["train"].shuffle().select(range(100))
-tokenized_datasets["test"] = tokenized_datasets["test"].shuffle().select(range(100))
+if sampled_num:
+    tokenized_datasets["train"] = tokenized_datasets["train"].shuffle().select(range(int(sampled_num)))
+    # tokenized_datasets["validation"] = tokenized_datasets["validation"].shuffle().select(range(int(sampled_num)))
+    # tokenized_datasets["test"] = tokenized_datasets["test"].shuffle().select(range(int(sampled_num)))
 
 # Distributed preprocessing and data ingestion using Ray Data
 ray_datasets = {
