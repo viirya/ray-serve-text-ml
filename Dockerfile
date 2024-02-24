@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=rayproject/ray:2.9.0-py39
+ARG BASE_IMAGE=rayproject/ray:2.9.2-py39
 
 FROM $BASE_IMAGE
 
