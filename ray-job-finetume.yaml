@@ -17,13 +17,14 @@ spec:
     pip:
     env_vars:
       CPUS_PER_WORKER: "1"
-      GPUS_PER_WORKER: "0"
-      BATCH_SIZE: "8"
+      GPUS_PER_WORKER: "1"
+      BATCH_SIZE: "5"
       PLACEMENT: "SPREAD"
       NUM_WORKERS: "6"
-      USE_GPU: "False"
+      USE_GPU: "True"
       EPOCHS: "100"
-      SAMPLED_NUM: "10000"
+      SAMPLED_NUM: "5000"
+      FIND_UNUSED_PARAMETERS: "False"
 
   # Suspend specifies whether the RayJob controller should create a RayCluster instance.
   # If a job is applied with the suspend field set to true, the RayCluster will not be created and we will wait for the transition to false.
@@ -45,9 +46,10 @@ spec:
       #pod template
       template:
         spec:
+          # serviceAccountName:
           containers:
             - name: ray-head
-              image: registry-host/username/ray:2.9.0-py39-text-ml-gpu
+              image: registry-host/username/ray:2.9.2-py39-text-ml-gpu
               env:
                 - name: AWS_DEFAULT_REGION
                   value: 'us-west-2'
@@ -88,13 +90,14 @@ spec:
         # See https://docs.ray.io/en/latest/cluster/cli.html#ray-start for all available options in `rayStartParams`.
         rayStartParams:
           num-cpus: "6"
-          num-gpus: "0"
+          num-gpus: "1"
         #pod template
         template:
           spec:
+            # serviceAccountName:
             containers:
               - name: ray-worker # must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc'
-                image: registry-host/username/ray:2.9.0-py39-text-ml-gpu
+                image: registry-host/username/ray:2.9.2-py39-text-ml-gpu
                 env:
                   - name: AWS_DEFAULT_REGION
                     value: 'us-west-2'
@@ -112,11 +115,11 @@ spec:
                   limits:
                     cpu: "6"
                     memory: "60G"
-                    # nvidia.com/gpu: 1
+                    nvidia.com/gpu: 1
                   requests:
                     cpu: "6"
                     memory: "60G"
-                    # nvidia.com/gpu: 1
+                    nvidia.com/gpu: 1
   # SubmitterPodTemplate is the template for the pod that will run the `ray job submit` command against the RayCluster.
   # If SubmitterPodTemplate is specified, the first container is assumed to be the submitter container.
   # submitterPodTemplate:

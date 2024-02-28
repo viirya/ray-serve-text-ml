@@ -47,6 +47,7 @@ use_gpu = os.environ.get("USE_GPU", "False").lower() == "true"
 epochs = int(os.environ.get("EPOCHS", "10"))
 
 sampled_num = os.environ.get("SAMPLED_NUM")
+find_unused_parameters = os.environ.get("FIND_UNUSED_PARAMETERS", "False").lower() == "true"
 
 def train_func(config):
     batch_size = config.get("batch_size", 8)
@@ -86,7 +87,8 @@ def train_func(config):
         load_best_model_at_end=True,
         metric_for_best_model="rouge1",
         use_cpu=not use_gpu,
-        max_steps=steps_per_epoch
+        max_steps=steps_per_epoch,
+        find_unused_parameters=find_unused_parameters
     )
 
     data_collator = DataCollatorForSeq2Seq(tokenizer)
