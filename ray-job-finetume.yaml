@@ -18,12 +18,12 @@ spec:
     env_vars:
       CPUS_PER_WORKER: "1"
       GPUS_PER_WORKER: "1"
-      BATCH_SIZE: "5"
+      BATCH_SIZE: "8"
       PLACEMENT: "SPREAD"
       NUM_WORKERS: "6"
       USE_GPU: "True"
-      EPOCHS: "100"
-      SAMPLED_NUM: "5000"
+      EPOCHS: "10"
+      SAMPLED_NUM: "3000"
       FIND_UNUSED_PARAMETERS: "False"
 
   # Suspend specifies whether the RayJob controller should create a RayCluster instance.
@@ -46,7 +46,7 @@ spec:
       #pod template
       template:
         spec:
-          # serviceAccountName:
+          serviceAccountName: ray-s3-access
           containers:
             - name: ray-head
               image: registry-host/username/ray:2.9.2-py39-text-ml-gpu
@@ -94,7 +94,7 @@ spec:
         #pod template
         template:
           spec:
-            # serviceAccountName:
+            serviceAccountName: ray-s3-access
             containers:
               - name: ray-worker # must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc'
                 image: registry-host/username/ray:2.9.2-py39-text-ml-gpu

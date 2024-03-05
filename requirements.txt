@@ -1,9 +1,9 @@
 # for local testing only
 # ray[serve]==2.9.0
-ray==2.9.2
+# ray==2.9.2
 # torch 1.11.0 cannot work on M3 Macbook
 # But latest torch doesn't work on EKS
-torch==1.11.0
+torch
 transformers[torch]
 fastapi>=0.80
 python-multipart>=0.0.6

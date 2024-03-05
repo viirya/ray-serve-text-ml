@@ -28,11 +28,11 @@ COPY evaluate ./evaluate
 RUN sudo chown -R ray:users /text_ml/evaluate \
     && sudo chmod 755 /text_ml/evaluate
 
-COPY *.py ./
-
 # Install nightly build of Ray to get latest fixes
 # https://github.com/ray-project/ray/pull/42953
 RUN pip uninstall -y ray
 RUN pip install -U "ray[default] @ https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-3.0.0.dev0-cp39-cp39-manylinux2014_x86_64.whl"
+
+COPY *.py ./
 
 USER ray

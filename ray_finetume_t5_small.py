@@ -87,8 +87,8 @@ def train_func(config):
         load_best_model_at_end=True,
         metric_for_best_model="rouge1",
         use_cpu=not use_gpu,
-        max_steps=steps_per_epoch,
-        find_unused_parameters=find_unused_parameters
+        max_steps=steps_per_epoch * epochs,
+        ddp_find_unused_parameters=find_unused_parameters
     )
 
     data_collator = DataCollatorForSeq2Seq(tokenizer)
@@ -96,6 +96,9 @@ def train_func(config):
     import numpy as np
 
     # metric = evaluate.load("rouge")
+    # For k8s which cannot access internet, we need to use local rouge.
+    # Just checkout evaluate github repo (https://github.com/huggingface/evaluate) and
+    # copy to docker image.
     metric = evaluate.load(f"{base_path}/evaluate/metrics/rouge")
 
     def compute_metrics(eval_pred):
@@ -203,7 +206,7 @@ ray_datasets = {
 def map_batches(batch):
     return batch
 processed_datasets = {
-    key: ray_datasets["train"].map_batches(map_batches, batch_format="pandas").random_shuffle(seed=42).repartition(4)
+    key: ds.map_batches(map_batches, batch_format="pandas").random_shuffle(seed=42).repartition(4)
     for key, ds in ray_datasets.items()
 }
 
